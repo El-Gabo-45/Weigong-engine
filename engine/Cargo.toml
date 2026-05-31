@@ -1,0 +1,27 @@
+[package]
+name        = "weigong-engine"
+description = "Rules engine and and search for Weigong (圍宮)"
+version.workspace    = true
+edition.workspace    = true
+authors.workspace    = true
+license.workspace    = true
+
+[dependencies]
+anyhow     = { workspace = true }
+thiserror  = { workspace = true }
+log        = { workspace = true }
+bytemuck   = { workspace = true }
+memmap2    = { workspace = true }
+rand       = { workspace = true }
+
+[dev-dependencies]
+env_logger = { workspace = true }
+
+[profile.dev]
+opt-level = 2
+
+[profile.release]
+opt-level       = 3
+lto             = "fat"
+codegen-units   = 1
+panic           = "abort"
