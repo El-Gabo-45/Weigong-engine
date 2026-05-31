@@ -1,0 +1,16 @@
+target/
+*.nnue
+
+node_modules/
+dist/
+.env
+
+data/games/*.db
+data/weights/*.nnue
+**/*.wgd
+
+.DS_Store
+Thumbs.db
+
+.vscode/settings.json
+*.swp
