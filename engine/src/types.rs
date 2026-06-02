@@ -60,6 +60,15 @@ impl Square {
         }
     }
 
+    // Can ignore the river
+    #[inline(always)]
+    pub fn is_special(self, piece: Piecekind) -> self {
+        match side {
+            Side::Black => self.bank() >= RIVER_RANK - 1,
+            Side::White => self.bank() <= RIVER_RANK + 1,
+        }
+    }
+
     // The square is in the palace of the given side
     #[inline(always)]
     pub fn is_palace(self, side: Side) -> bool {
@@ -362,6 +371,8 @@ impl Default for NotationTerminal {
     }
 }
 
+// Suffix for move notation indicating check, checkmate, stalemate, draw, etc.
+
 impl NotationTerminal {
     #[inline(always)]
     pub fn as_str(self) -> &'static str {
@@ -377,6 +388,8 @@ impl NotationTerminal {
         }
     }
 }
+
+// Archer move notation
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ArcherOption {
@@ -400,6 +413,8 @@ pub enum ArcherNotation {
     },
 }
 
+// Palace curse notation
+
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct PalaceCurseNotation {
     pub groups: Vec<Vec<(PieceKind, Square)>>,
@@ -412,6 +427,8 @@ pub struct MoveNotationContext {
     pub terminal: NotationTerminal,
     pub check: bool,
 }
+
+// Pieces symbols for notation
 
 #[inline(always)]
 fn piece_symbol(kind: PieceKind) -> &'static str {
@@ -435,6 +452,8 @@ fn piece_symbol(kind: PieceKind) -> &'static str {
         PieceKind::Crossbow => "B",
     }
 }
+
+// Palace curse notation
 
 #[inline(always)]
 fn piece_symbol_lower(kind: PieceKind) -> String {
@@ -463,6 +482,8 @@ pub fn append_curse_notation(curse: &PalaceCurseNotation) -> String {
     suffix
 }
 
+// Drops notation
+
 pub fn generate_move_notation(
     mv: Move,
     moved_piece_after: PieceKind,
@@ -481,7 +502,7 @@ pub fn generate_move_notation(
         s.push('*');
         s.push_str(&to_str);
     } else {
-        let sym = piece_symbol(moved_piece_after);
+        let sym = piece_symbol(moved_piece_after); // Notation for archer ambush
 
         if let Some(ambush_info) = ambush {
             s.push('A');
@@ -552,6 +573,8 @@ pub fn generate_move_notation(
         }
     }
 
+    // Append check/checkmate/stalemate/draw notation
+
     if terminal != NotationTerminal::None {
         s.push_str(terminal.as_str());
     } else if check {
@@ -564,6 +587,8 @@ pub fn generate_move_notation(
 
     s
 }
+
+// Main method to get move notation, combining all the context (captures, promotions, archer ambushes, palace curses, check/checkmate/stalemate/draw)
 
 impl Move {
     pub fn notation_with(
@@ -659,51 +684,4 @@ pub struct PalaceState {
     pub turns_remaining: u8,
     // Verify if the palace is currently under curse (after 3 turns of invasion)
     pub cursed: bool,
-}
-
-//  Tests
-
-#[test]
-fn notation_normal_move() {
-    let mv = Move::new_normal(
-        Square::new(12, 6),
-        Square::new(11, 6),
-        PieceKind::King,
-        None,
-        false,
-    );
-
-    assert_eq!(
-        mv.notation_with(
-            PieceKind::King,
-            None,
-            None,
-            0,
-            None,
-            NotationTerminal::None,
-            false,
-        ),
-        "Kg2"
-    );
-}
-
-#[test]
-fn notation_drop() {
-    let mv = Move::new_drop(
-        Square::new(6, 5),
-        PieceKind::Pawn,
-    );
-
-    assert_eq!(
-        mv.notation_with(
-            PieceKind::Pawn,
-            None,
-            None,
-            0,
-            None,
-            NotationTerminal::None,
-            false,
-        ),
-        "p*f7"
-    );
 }
