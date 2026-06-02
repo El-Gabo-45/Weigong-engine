@@ -22,9 +22,3 @@ serde_json     = { workspace = true }
 [[bin]]
 name = "selfplay"
 path = "src/main.rs"
-
-[profile.release]
-opt-level     = 3
-lto           = "fat"
-codegen-units = 1
-panic         = "abort"

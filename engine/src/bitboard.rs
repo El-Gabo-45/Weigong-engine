@@ -7,7 +7,7 @@
 // This representation allows for efficient bit-wise operations
 // and is compatible with SIMD on x86_64 via future intrinsics.
 
-use crate::types::{Square, Side, FILES, RANKS, SQUARES, RIVER_RANK, PALACE_FILE_MIN, PALACE_FILE_MAX, BLACK_PALACE_RANK_MAX, WHITE_PALACE_RANK_MIN};
+use crate::types::{Square, Side, FILES, RANKS, RIVER_RANK, PALACE_FILE_MIN, PALACE_FILE_MAX, BLACK_PALACE_RANK_MAX, WHITE_PALACE_RANK_MIN};
 
 //  Bitboard
 
@@ -121,7 +121,7 @@ impl Bitboard {
     
     #[inline(always)]
     pub fn shift_east(self) -> Self {
-        (Bitboard { lo: self.lo << 1, hi: ((self.hi << 1) | (self.lo >> 127)) & Self::HI_MASK })
+        (Bitboard { lo: self.lo << 1, hi: ((self.hi << 1) | ((self.lo >> 127) as u64)) & Self::HI_MASK })
             & NOT_FILE_A // file 0 can't appear to the east
     }
 

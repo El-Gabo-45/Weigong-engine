@@ -1,0 +1,19 @@
+[package]
+name    = "weigong-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+weigong-engine = { path = "../../engine" }
+
+[[test]]
+name = "bitboard"
+path = "bitboard.rs"
+
+[[test]]
+name = "notation"
+path = "notation.rs"
+
+[[test]]
+name = "river"
+path = "river.rs"

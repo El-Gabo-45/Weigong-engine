@@ -62,11 +62,20 @@ impl Square {
 
     // Can ignore the river
     #[inline(always)]
-    pub fn is_special(self, piece: Piecekind) -> self {
-        match side {
-            Side::Black => self.bank() >= RIVER_RANK - 1,
-            Side::White => self.bank() <= RIVER_RANK + 1,
+    pub fn river_step(origin: Square, d_rank: i8, d_file: i8) -> Option<Square> {
+        let mut r = origin.rank() as isize + d_rank as isize;
+        let     f = origin.file() as isize + d_file as isize;
+
+        // Borde lateral
+        if f < 0 || f >= FILES as isize { return None; }
+
+        if r == RIVER_RANK as isize {
+            r += d_rank.signum() as isize;
         }
+
+        if r < 0 || r >= RANKS as isize { return None; }
+
+        Some(Square::new(r as usize, f as usize))
     }
 
     // The square is in the palace of the given side
@@ -489,7 +498,7 @@ pub fn generate_move_notation(
     moved_piece_after: PieceKind,
     captured_piece: Option<PieceKind>,
     ambush: Option<&ArcherNotation>,
-    chosen_ambush_index: usize,
+    _chosen_ambush_index: usize,
     curse: Option<&PalaceCurseNotation>,
     terminal: NotationTerminal,
     check: bool,
