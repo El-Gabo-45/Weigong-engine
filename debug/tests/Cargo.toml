@@ -17,3 +17,7 @@ path = "notation.rs"
 [[test]]
 name = "river"
 path = "river.rs"
+
+[[test]]
+name = "zobrist"
+path = "zobrist.rs"
