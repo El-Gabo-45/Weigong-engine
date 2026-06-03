@@ -101,11 +101,12 @@ impl Square {
 }
 
 impl std::fmt::Display for Square {
-    // WGN notation: column as letter (a-m), row as number (1-13)
-    // file 0 = 'a', rank 0 = '13' (like in chess, from the black side)
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if !self.is_valid() {
+            return write!(f, "??");
+        }
         let file_char = (b'a' + self.file() as u8) as char;
-        let rank_num  = RANKS - self.rank(); // rank 0 → "13", rank 12 → "1"
+        let rank_num  = RANKS - self.rank();
         write!(f, "{}{}", file_char, rank_num)
     }
 }
@@ -275,8 +276,9 @@ impl Piece {
 
     #[inline(always)]
     pub fn kind(self) -> PieceKind {
-        // SAFETY: PieceKind has 17 variants (0-16), and the 5 low bits are always valid
-        unsafe { std::mem::transmute(self.0 & 0x1F) }
+        let k = self.0 & 0x1F;
+        debug_assert!(k <= 16, "Invalid piece kind: {}", k);
+        unsafe { std::mem::transmute(k) }
     }
 
     #[inline(always)]
@@ -339,12 +341,18 @@ impl Move {
     pub fn to_sq(self) -> Square     { Square(((self.0 >> 8) & 0xFF) as u8) }
 
     #[inline(always)]
-    pub fn piece(self) -> PieceKind  { unsafe { std::mem::transmute(((self.0 >> 16) & 0x1F) as u8) } }
+    pub fn piece(self) -> PieceKind {
+        let k = ((self.0 >> 16) & 0x1F) as u8;
+        debug_assert!(k <= 16, "Invalid piece kind in Move::piece: {}", k);
+        unsafe { std::mem::transmute(k) }
+    }
 
     #[inline(always)]
     pub fn captured(self) -> Option<PieceKind> {
         let k = ((self.0 >> 21) & 0x1F) as u8;
-        if k == 31 { None } else { unsafe { Some(std::mem::transmute(k)) } }
+        if k == 31 { return None; }
+        debug_assert!(k <= 16, "Invalid piece kind in Move::captured: {}", k);
+        unsafe { Some(std::mem::transmute(k)) }
     }
 
     #[inline(always)]

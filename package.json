@@ -1,0 +1,27 @@
+{
+  "name": "weigong",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/El-Gabo-45/Weigong-engine.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/El-Gabo-45/Weigong-engine/issues"
+  },
+  "homepage": "https://github.com/El-Gabo-45/Weigong-engine#readme",
+  "devDependencies": {
+    "@napi-rs/cli": "^3.7.0"
+  }
+}
