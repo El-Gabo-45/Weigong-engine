@@ -87,6 +87,16 @@ impl Bitboard {
         }
     }
 
+    #[inline(always)]
+    pub fn assert_valid(self) {
+        #[cfg(debug_assertions)]
+        assert!(
+            self.hi & !Self::HI_MASK == 0,
+            "Bitboard have dirty bits in hi: hi={:064b} (Waited bits: 0-40)",
+            self.hi
+        );
+    }
+
     // Shifts
 
     // The board is 13 columns wide. Shifting N rows = shifting N*13 bits
