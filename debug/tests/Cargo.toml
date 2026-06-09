@@ -21,3 +21,11 @@ path = "river.rs"
 [[test]]
 name = "zobrist"
 path = "zobrist.rs"
+
+[[test]]
+name = "board_visual"
+path = "board_visual.rs"
+
+[[test]]
+name = "position"
+path = "position.rs"

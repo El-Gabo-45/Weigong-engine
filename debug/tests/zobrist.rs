@@ -84,3 +84,40 @@ fn xor_is_reversible() {
     hash ^= key;
     assert_eq!(hash, 0);
 }
+
+#[test]
+fn piece_key_different_pieces() {
+    // different piece types on same square must give different keys
+    let k1 = zobrist::piece_key(Square::new(3, 3), PieceKind::Tower, Side::Black);
+    let k2 = zobrist::piece_key(Square::new(3, 3), PieceKind::Cannon, Side::Black);
+    assert_ne!(k1, k2);
+}
+
+#[test]
+fn reserve_key_different_pieces() {
+    // different piece types in reserve must give different keys
+    let k1 = zobrist::reserve_key(PieceKind::Pawn, Side::Black);
+    let k2 = zobrist::reserve_key(PieceKind::Tower, Side::Black);
+    assert_ne!(k1, k2);
+}
+
+#[test]
+fn xor_simulates_move() {
+    // simulates moving a piece: remove from origin, place on destination
+    let mut hash = 0u64;
+    let origin = Square::new(5, 5);
+    let dest   = Square::new(7, 5);
+
+    // place piece on origin
+    hash ^= zobrist::piece_key(origin, PieceKind::Tower, Side::Black);
+
+    // move: remove from origin, place on dest, change turn
+    hash ^= zobrist::piece_key(origin, PieceKind::Tower, Side::Black);
+    hash ^= zobrist::piece_key(dest,   PieceKind::Tower, Side::Black);
+    hash ^= zobrist::side_key();
+
+    // hash should now only reflect tower on dest + side change
+    let expected = zobrist::piece_key(dest, PieceKind::Tower, Side::Black)
+                 ^ zobrist::side_key();
+    assert_eq!(hash, expected);
+}
